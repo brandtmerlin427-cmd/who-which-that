@@ -1,0 +1,597 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let's Hugo – English Trainer</title>
+
+<style>
+* {box-sizing:border-box}
+
+body {
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#d9f7ff,#e9e2ff,#fff0d9);
+ color:#24334a;
+}
+
+header {
+ background:linear-gradient(120deg,#6856ed,#9375ff);
+ color:white;
+ padding:24px 15px;
+ text-align:center;
+ border-radius:0 0 28px 28px;
+}
+
+header h1 {font-size:32px;margin:5px}
+header p {margin:8px}
+
+nav {
+ display:flex;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:10px;
+ padding:15px;
+}
+
+button {
+ border:0;
+ padding:12px 20px;
+ border-radius:13px;
+ font-size:15px;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.2s;
+}
+
+button:hover {transform:translateY(-2px)}
+.navbtn {background:white;color:#6856ed;box-shadow:0 3px 10px #0001}
+
+main {
+ max-width:850px;
+ margin:15px auto;
+ padding:15px;
+}
+
+.card {
+ background:white;
+ border-radius:22px;
+ padding:23px;
+ margin-bottom:18px;
+ box-shadow:0 7px 25px #4441;
+}
+
+h2 {color:#6856ed}
+
+.duck {
+ display:flex;
+ align-items:center;
+ gap:15px;
+ background:#fff8d9;
+ border-radius:18px;
+ padding:15px;
+ margin-bottom:20px;
+}
+
+.duckface {font-size:65px}
+.duck p {margin:5px 0}
+
+.levels {
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
+
+.level {
+ padding:17px 5px;
+ color:white;
+ border-radius:15px;
+ font-size:17px;
+}
+
+.easy {background:#31bd88}
+.medium {background:#f2ad38}
+.hard {background:#ed657e}
+
+.level.active {outline:4px solid #3335}
+
+.primary {
+ background:#6856ed;
+ color:white;
+ width:100%;
+ margin-top:15px;
+}
+
+.secondary {
+ background:#e9e5ff;
+ color:#6856ed;
+ margin-top:10px;
+ width:100%;
+}
+
+.question {
+ background:#f6f5ff;
+ border-radius:15px;
+ padding:17px;
+ margin:13px 0;
+ border:2px solid transparent;
+}
+
+.question p {
+ font-size:17px;
+ font-weight:bold;
+ line-height:1.6;
+}
+
+input {
+ padding:12px;
+ width:100%;
+ border:2px solid #d9d6ed;
+ border-radius:11px;
+ font-size:17px;
+ outline:none;
+}
+
+input:focus {border-color:#6856ed}
+
+.correct {
+ border:2px solid #27bd79;
+ background:#e8fff2;
+}
+
+.wrong {
+ border:2px solid #ef5656;
+ background:#fff0f0;
+}
+
+.result {
+ padding:15px;
+ border-radius:15px;
+ margin-top:15px;
+ font-weight:bold;
+ text-align:center;
+ background:#f2f0ff;
+}
+
+.hidden {display:none}
+
+.progress {
+ background:#eee;
+ height:12px;
+ border-radius:20px;
+ overflow:hidden;
+}
+
+.progressbar {
+ height:100%;
+ width:0%;
+ background:#31bd88;
+ transition:.3s;
+}
+
+footer {
+ text-align:center;
+ padding:25px;
+ color:#777;
+}
+
+@media(max-width:550px) {
+ .levels {grid-template-columns:1fr}
+ header h1 {font-size:25px}
+ main {padding:10px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🦆 Let's Hugo!</h1>
+<p>Your funny English learning adventure</p>
+</header>
+
+<nav>
+<button class="navbtn" onclick="showPage('home')">🏠 Start</button>
+<button class="navbtn" onclick="showPage('learn')">📚 Lernen</button>
+<button class="navbtn" onclick="showPage('quiz')">✏️ Aufgaben</button>
+</nav>
+
+<main>
+
+<section id="home">
+
+<div class="duck">
+<div class="duckface">🦆</div>
+<div>
+<h2>Hey! Ich bin Letshugo!</h2>
+<p>Ich helfe dir beim Englischlernen!</p>
+<p>Heute lernen wir <b>WHO, WHICH und THAT!</b></p>
+</div>
+</div>
+
+<div class="card">
+<h2>📚 Was möchtest du machen?</h2>
+<p>Wähle deine Schwierigkeitsstufe aus. Du bekommst immer 5 zufällige Aufgaben.</p>
+
+<div class="levels">
+<button class="level easy active" onclick="setLevel('easy',this)">🟢 Easy</button>
+<button class="level medium" onclick="setLevel('medium',this)">🟡 Medium</button>
+<button class="level hard" onclick="setLevel('hard',this)">🔴 Hard</button>
+</div>
+
+<button class="primary" onclick="startQuiz()">🚀 Jetzt lernen!</button>
+</div>
+
+<div class="card">
+<h2>⭐ Dein Fortschritt</h2>
+<p>Beantwortete Aufgaben: <b id="total">0</b></p>
+<p>Richtige Antworten: <b id="right">0</b></p>
+<p>Falsche Antworten: <b id="false">0</b></p>
+<div class="progress"><div class="progressbar" id="progress"></div></div>
+</div>
+
+</section>
+
+<section id="learn" class="hidden">
+<div class="card">
+<h2>📖 Der Lerntext</h2>
+
+<h3>🟢 WHO</h3>
+<p><b>Who</b> benutzt man für Menschen.</p>
+<p>Example: The boy <b>who</b> plays football is my friend.</p>
+
+<h3>🟡 WHICH</h3>
+<p><b>Which</b> benutzt man für Dinge und Tiere.</p>
+<p>Example: The dog <b>which</b> is black is cute.</p>
+
+<h3>🔵 THAT</h3>
+<p><b>That</b> kann man für Menschen, Tiere und Dinge benutzen.</p>
+<p>Example: The book <b>that</b> I read is interesting.</p>
+
+<hr>
+
+<h2>💡 Merke dir!</h2>
+<p>👤 Menschen = WHO oder THAT</p>
+<p>📦 Dinge = WHICH oder THAT</p>
+<p>🐶 Tiere = WHICH oder THAT</p>
+
+<div class="duck">
+<div class="duckface">🦆</div>
+<div>
+<b>Letshugo erklärt:</b>
+<p>Who ist für Personen. Which ist für Dinge und That kann für beides benutzt werden. Ganz einfach!</p>
+</div>
+</div>
+
+<button class="primary" onclick="startQuiz()">Jetzt üben!</button>
+</div>
+</section>
+
+<section id="quiz" class="hidden">
+
+<div class="duck">
+<div class="duckface">🦆</div>
+<div>
+<b>Letshugo sagt:</b>
+<p>Fülle die Lücken mit WHO, WHICH oder THAT aus!</p>
+</div>
+</div>
+
+<div class="card">
+<h2 id="quizTitle">✏️ Easy – Aufgaben</h2>
+<p>Aufgabe <span id="counter">1</span> von 5</p>
+
+<div class="progress">
+<div class="progressbar" id="quizProgress"></div>
+</div>
+
+<div id="questions"></div>
+
+<button class="primary" id="solve" onclick="checkAnswers()">✅ Lösen</button>
+<button class="secondary hidden" id="next" onclick="startQuiz()">🔄 Neue 5 Aufgaben</button>
+
+<div id="result" class="result hidden"></div>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+🦆 Let's Hugo English Trainer · Learn English and have fun!
+</footer>
+
+<script>
+
+// ==================================
+// FRAGENPOOL: 120 VERSCHIEDENE SÄTZE
+// ==================================
+
+function make(sentences, answers) {
+ return sentences.map(s => ({
+  text:s,
+  answers:answers.split("|")
+ }));
+}
+
+const bank = {
+
+easy: [
+ ...make([
+ "The girl ___ lives next door is my friend.",
+ "The boy ___ plays football is very fast.",
+ "The teacher ___ helps us is nice.",
+ "The man ___ works here is my uncle.",
+ "The woman ___ sings is famous.",
+ "The student ___ sits here is clever.",
+ "The doctor ___ helped me was friendly.",
+ "The baby ___ is sleeping is cute.",
+ "The singer ___ I like is popular.",
+ "The friend ___ called me is funny.",
+ "The girl ___ has a dog is my sister.",
+ "The boy ___ wears glasses is Tom.",
+ "The woman ___ drives the car is my mum.",
+ "The man ___ lives in London is English.",
+ "The teacher ___ teaches English is cool.",
+ "The player ___ scored is happy.",
+ "The child ___ is laughing is my brother.",
+ "The person ___ opened the door is here.",
+ "The boy ___ rides a bike is fast.",
+ "The girl ___ loves animals is kind."
+ ],"who|that"),
+
+ ...make([
+ "The book ___ is on the table is mine.",
+ "The car ___ is red belongs to Dad.",
+ "The dog ___ is barking is loud.",
+ "The cake ___ tastes good is delicious.",
+ "The phone ___ I bought is new.",
+ "The house ___ is big is beautiful.",
+ "The film ___ we watched was funny.",
+ "The bag ___ is blue is mine.",
+ "The computer ___ I use is old.",
+ "The cat ___ sleeps here is cute.",
+ "The bike ___ is broken is mine.",
+ "The game ___ I play is fun.",
+ "The picture ___ hangs here is nice.",
+ "The shoes ___ I bought are new.",
+ "The food ___ smells good is ready.",
+ "The bird ___ is singing is small.",
+ "The ball ___ is outside is yours.",
+ "The watch ___ I wear is expensive.",
+ "The room ___ is clean looks great.",
+ "The toy ___ is on the floor is new."
+ ],"which|that")
+],
+
+medium: [
+ ...make([
+ "The woman ___ lives in the house at the end of the street is a doctor.",
+ "The boy ___ won the competition was very happy.",
+ "The teacher ___ gave us homework is absent today.",
+ "The man ___ helped the old lady was very kind.",
+ "The girl ___ is wearing a yellow jacket is my cousin.",
+ "The student ___ finished the test first got a prize.",
+ "The actor ___ plays the main character is famous.",
+ "The neighbour ___ owns three dogs is friendly.",
+ "The woman ___ works at the hospital speaks English.",
+ "The boy ___ broke the window said sorry.",
+ "The player ___ scored the winning goal is my friend.",
+ "The person ___ sent this message is unknown.",
+ "The girl ___ won the singing contest is talented.",
+ "The man ___ repaired my bike was helpful.",
+ "The teacher ___ explained the rule was very patient.",
+ "The child ___ found the lost key was excited.",
+ "The singer ___ performed yesterday was amazing.",
+ "The friend ___ invited me lives nearby.",
+ "The woman ___ bought the house is very rich.",
+ "The boy ___ forgot his homework was nervous."
+ ],"who|that"),
+
+ ...make([
+ "The laptop ___ I bought last week works perfectly.",
+ "The restaurant ___ we visited yesterday was expensive.",
+ "The film ___ won the award was exciting.",
+ "The building ___ stands near the station is very old.",
+ "The jacket ___ I wanted was sold out.",
+ "The computer ___ stopped working needs repairing.",
+ "The museum ___ we visited was interesting.",
+ "The dog ___ lives in our garden is very friendly.",
+ "The book ___ you recommended was exciting.",
+ "The game ___ everyone is talking about is popular.",
+ "The picture ___ you painted looks beautiful.",
+ "The train ___ arrived late was full.",
+ "The cake ___ my sister made tasted amazing.",
+ "The website ___ I use for learning is helpful.",
+ "The bag ___ I left at school is missing.",
+ "The bird ___ sits on our roof sings every morning.",
+ "The phone ___ has a broken screen is mine.",
+ "The film ___ we watched last night was boring.",
+ "The shop ___ sells sports clothes is closed.",
+ "The machine ___ makes this noise is broken."
+ ],"which|that")
+],
+
+hard: [
+ ...make([
+ "The woman ___ I told you about yesterday has moved abroad.",
+ "The student ___ project was chosen will present it tomorrow.",
+ "The man ___ helped us find the station was very polite.",
+ "The person ___ you spoke to on the phone is waiting outside.",
+ "The scientist ___ discovered the new planet is giving an interview.",
+ "The girl ___ brother plays in the team is my classmate.",
+ "The teacher ___ lessons are always interesting is very popular.",
+ "The boy ___ everyone thought had won actually came second.",
+ "The author ___ books are sold worldwide lives in England.",
+ "The woman ___ advice helped me is a good friend.",
+ "The player ___ performance impressed the coach received an award.",
+ "The man ___ car was stolen called the police.",
+ "The person ___ designed this building is an architect.",
+ "The girl ___ I met at the library recommended this book.",
+ "The teacher ___ explained the difficult topic made it easy.",
+ "The boy ___ parents work abroad lives with his grandparents.",
+ "The woman ___ we invited to the party could not come.",
+ "The student ___ answers were correct received full marks.",
+ "The man ___ spoke during the meeting is our new manager.",
+ "The singer ___ voice everyone recognised performed live."
+ ],"who|that"),
+
+ ...make([
+ "The project ___ we have been working on is finally finished.",
+ "The device ___ was invented last year saves energy.",
+ "The painting ___ hangs in the museum is very valuable.",
+ "The film ___ everyone expected to win did not receive an award.",
+ "The animal ___ was rescued yesterday is doing well.",
+ "The book ___ I borrowed from the library is overdue.",
+ "The experiment ___ we carried out produced surprising results.",
+ "The bridge ___ connects the two villages is being repaired.",
+ "The information ___ you gave me was very useful.",
+ "The software ___ we installed yesterday needs an update.",
+ "The article ___ was published this morning contains new facts.",
+ "The bicycle ___ had been left outside was stolen.",
+ "The building ___ was damaged in the storm is being rebuilt.",
+ "The invention ___ changed the world was developed many years ago.",
+ "The photograph ___ you showed me reminded me of our holiday.",
+ "The machine ___ makes the products automatically is very expensive.",
+ "The documentary ___ we watched in class was informative.",
+ "The suitcase ___ I packed last night is still in the hallway.",
+ "The solution ___ the teacher suggested worked perfectly.",
+ "The website ___ contains the information is easy to use."
+ ],"which|that")
+]
+
+};
+
+// ==================================
+// SPIEL UND AUSWERTUNG
+// ==================================
+
+let level = "easy";
+let current = [];
+let submitted = false;
+let total = 0;
+let right = 0;
+let wrong = 0;
+let completed = new Set();
+
+function showPage(page) {
+ ["home","learn","quiz"].forEach(p => {
+  document.getElementById(p).classList.add("hidden");
+ });
+ document.getElementById(page).classList.remove("hidden");
+}
+
+function setLevel(l,btn) {
+ level = l;
+ document.querySelectorAll(".level").forEach(b => b.classList.remove("active"));
+ btn.classList.add("active");
+}
+
+function startQuiz() {
+ showPage("quiz");
+ submitted = false;
+
+ const pool = bank[level];
+
+ // Zufällige Fragen ohne Wiederholung
+ let available = pool.filter(q => !completed.has(q.text));
+
+ if(available.length < 5) {
+  completed.clear();
+  available = [...pool];
+ }
+
+ available.sort(() => Math.random() - 0.5);
+ current = available.slice(0,5);
+
+ current.forEach(q => completed.add(q.text));
+
+ document.getElementById("quizTitle").textContent =
+  "✏️ " + level.toUpperCase() + " – Aufgaben";
+
+ document.getElementById("counter").textContent = "1–5";
+ document.getElementById("questions").innerHTML = "";
+
+ current.forEach((q,i) => {
+  const div = document.createElement("div");
+  div.className = "question";
+  div.id = "q" + i;
+
+  div.innerHTML = `
+   <p>${i+1}. ${q.text}</p>
+   <input id="a${i}" type="text"
+    placeholder="who / which / that"
+    autocomplete="off">
+   <div id="feedback${i}"></div>
+  `;
+
+  document.getElementById("questions").appendChild(div);
+ });
+
+ document.getElementById("solve").classList.remove("hidden");
+ document.getElementById("next").classList.add("hidden");
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("quizProgress").style.width = "0%";
+}
+
+function checkAnswers() {
+ if(submitted) return;
+ submitted = true;
+
+ let score = 0;
+
+ current.forEach((q,i) => {
+  const input = document.getElementById("a"+i);
+  const box = document.getElementById("q"+i);
+  const feedback = document.getElementById("feedback"+i);
+
+  const answer = input.value.trim().toLowerCase();
+  const correct = q.answers.includes(answer);
+
+  total++;
+
+  if(correct) {
+   score++;
+   right++;
+   box.classList.add("correct");
+   feedback.innerHTML = "🟢 Richtig! Sehr gut!";
+  } else {
+   wrong++;
+   box.classList.add("wrong");
+   feedback.innerHTML =
+    "🔴 Falsch! Richtige Antwort: <b>" +
+    q.answers.join(" oder ").toUpperCase() + "</b>";
+  }
+
+  input.disabled = true;
+ });
+
+ document.getElementById("total").textContent = total;
+ document.getElementById("right").textContent = right;
+ document.getElementById("false").textContent = wrong;
+
+ document.getElementById("progress").style.width =
+  (total ? right/total*100 : 0) + "%";
+
+ document.getElementById("quizProgress").style.width = "100%";
+
+ const result = document.getElementById("result");
+ result.classList.remove("hidden");
+
+ result.innerHTML =
+  "🦆 Letshugo sagt:<br><br>" +
+  score + " von 5 richtig!<br>" +
+  (score === 5 ? "🏆 Perfekt! Du bist ein Englisch-Profi!" :
+   score >= 3 ? "⭐ Gut gemacht! Weiter üben!" :
+   "💪 Nicht aufgeben! Du schaffst das!");
+
+ document.getElementById("solve").classList.add("hidden");
+ document.getElementById("next").classList.remove("hidden");
+}
+
+showPage("home");
+
+</script>
+</body>
+</html>
